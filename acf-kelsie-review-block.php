@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Kelsie ACF Reviews Block
  * Description: ACF block for displaying Reviews repeater content with optional Rank Math schema integration.
- * Version:     1.1.6
+ * Version:     1.1.7
  * Author:      Kelsie Cakes
  */
 
@@ -37,6 +37,16 @@ add_action( 'admin_init', function () {
     }
 } );
 
+function kelsie_register_review_block() {
+    if ( ! function_exists( 'acf_register_block_type' ) ) {
+        return;
+    }
+
+    acf_register_block_type( KELSIE_BLOCK_DIR . '/block.json' );
+}
+
+add_action( 'acf/init', 'kelsie_register_review_block', 5 );
+
 add_action( 'init', function () {
     // Styles referenced by block.json
     $style_path        = plugin_dir_path( __FILE__ ) . 'assets/style.css';
@@ -55,16 +65,6 @@ add_action( 'init', function () {
         [],
         file_exists( $editor_style_path ) ? filemtime( $editor_style_path ) : null
     );
-
-    // Safe even if ACF is off; render.php guards itself.
-add_action( 'acf/init', function () {
-    if ( ! function_exists( 'acf_register_block_type' ) ) {
-        return;
-    }
-
-    acf_register_block_type( KELSIE_BLOCK_DIR . '/block.json' );
-} );
-
 });
 
 /**
