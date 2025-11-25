@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Kelsie ACF Reviews Block
  * Description: ACF block for displaying Reviews repeater content with optional Rank Math schema integration.
- * Version:     1.1.6
+ * Version:     1.1.7
  * Author:      Kelsie Cakes
  */
 
