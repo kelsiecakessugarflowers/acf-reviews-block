@@ -57,12 +57,14 @@ add_action( 'init', function () {
     );
 
     // Safe even if ACF is off; render.php guards itself.
-    register_block_type(
-        KELSIE_BLOCK_DIR,
-        [
-            'render_callback' => 'kelsie_render_review_block',
-        ]
-    );
+add_action( 'acf/init', function () {
+    if ( ! function_exists( 'acf_register_block_type' ) ) {
+        return;
+    }
+
+    acf_register_block_type( KELSIE_BLOCK_DIR . '/block.json' );
+} );
+
 });
 
 /**
