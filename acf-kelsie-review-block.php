@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Kelsie ACF Reviews Block
  * Description: ACF block for displaying Reviews repeater content with optional Rank Math schema integration.
- * Version:     1.1.7
+ * Version:     1.1.8
  * Author:      Kelsie Cakes
  */
 
@@ -42,7 +42,52 @@ function kelsie_register_review_block() {
         return;
     }
 
-    acf_register_block_type( KELSIE_BLOCK_DIR . '/block.json' );
+    $block_json_path = KELSIE_BLOCK_DIR . '/block.json';
+    $acf_version     = function_exists( 'acf_version' ) ? acf_version() : '';
+
+    if ( $acf_version && version_compare( $acf_version, '6.1', '>=' ) ) {
+        acf_register_block_type( $block_json_path );
+        return;
+    }
+
+    if ( ! file_exists( $block_json_path ) ) {
+        return;
+    }
+
+    $block_settings = json_decode( file_get_contents( $block_json_path ), true );
+
+    if ( ! is_array( $block_settings ) ) {
+        return;
+    }
+
+    $render_template = '';
+
+    if ( ! empty( $block_settings['acf']['renderTemplate'] ) ) {
+        $render_template = KELSIE_BLOCK_DIR . '/' . ltrim( $block_settings['acf']['renderTemplate'], '/' );
+    }
+
+    $compat_settings = array_filter(
+        [
+            'name'            => ! empty( $block_settings['name'] ) ? $block_settings['name'] : KELSIE_BLOCK_NAME,
+            'title'           => $block_settings['title'] ?? '',
+            'description'     => $block_settings['description'] ?? '',
+            'category'        => $block_settings['category'] ?? '',
+            'icon'            => $block_settings['icon'] ?? '',
+            'keywords'        => $block_settings['keywords'] ?? [],
+            'supports'        => $block_settings['supports'] ?? [],
+            'style'           => $block_settings['style'] ?? '',
+            'editor_style'    => $block_settings['editorStyle'] ?? '',
+            'mode'            => $block_settings['acf']['mode'] ?? 'preview',
+            'render_template' => $render_template ?: null,
+            'example'         => $block_settings['example'] ?? [],
+            'api_version'     => $block_settings['apiVersion'] ?? 2,
+        ],
+        static function ( $value ) {
+            return null !== $value && '' !== $value;
+        }
+    );
+
+    acf_register_block_type( $compat_settings );
 }
 
 add_action( 'acf/init', 'kelsie_register_review_block', 5 );
