@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Kelsie ACF Reviews Block
  * Description: ACF block for displaying Reviews repeater content with optional Rank Math schema integration.
- * Version:     1.1.8
+ * Version:     1.1.9
  * Author:      Kelsie Cakes
  */
 
@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** ---------------------------
  *  CONFIG (edit in one place)
  * --------------------------- */
-define( 'KELSIE_BLOCK_DIR', __DIR__ . '/blocks/kelsie-review' );
-define( 'KELSIE_BLOCK_NAME', 'kelsiecakes/review-list' );    // block.json "name"
+define( 'KELSIE_REVIEW_BLOCK_DIR', __DIR__ . '/blocks/kelsie-review' );
+define( 'KELSIE_REVIEW_BLOCK_NAME', 'kelsiecakes/review-list' );    // block.json "name"
 
 define( 'KELSIE_REVIEW_REPEATER', 'client_testimonials' );      // repeater
 define( 'KELSIE_REVIEW_BODY', 'review_body' );                  // sub field (Text Area)
@@ -42,7 +42,7 @@ function kelsie_register_review_block() {
         return;
     }
 
-    $block_json_path = KELSIE_BLOCK_DIR . '/block.json';
+    $block_json_path = KELSIE_REVIEW_BLOCK_DIR . '/block.json';
     $acf_version     = function_exists( 'acf_version' ) ? acf_version() : '';
 
     if ( $acf_version && version_compare( $acf_version, '6.1', '>=' ) ) {
@@ -63,12 +63,12 @@ function kelsie_register_review_block() {
     $render_template = '';
 
     if ( ! empty( $block_settings['acf']['renderTemplate'] ) ) {
-        $render_template = KELSIE_BLOCK_DIR . '/' . ltrim( $block_settings['acf']['renderTemplate'], '/' );
+        $render_template = KELSIE_REVIEW_BLOCK_DIR . '/' . ltrim( $block_settings['acf']['renderTemplate'], '/' );
     }
 
     $compat_settings = array_filter(
         [
-            'name'            => ! empty( $block_settings['name'] ) ? $block_settings['name'] : KELSIE_BLOCK_NAME,
+            'name'            => ! empty( $block_settings['name'] ) ? $block_settings['name'] : KELSIE_REVIEW_BLOCK_NAME,
             'title'           => $block_settings['title'] ?? '',
             'description'     => $block_settings['description'] ?? '',
             'category'        => $block_settings['category'] ?? '',
@@ -208,7 +208,7 @@ add_action( 'plugins_loaded', function () {
         }
 
         global $post;
-        if ( ! $post || ! function_exists( 'has_block' ) || ! has_block( KELSIE_BLOCK_NAME, $post ) ) {
+        if ( ! $post || ! function_exists( 'has_block' ) || ! has_block( KELSIE_REVIEW_BLOCK_NAME, $post ) ) {
             return $data;
         }
         if ( ! function_exists( 'have_rows' ) ) {
